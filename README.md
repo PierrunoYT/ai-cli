@@ -1,4 +1,4 @@
-# CodeCraft
+# AI CLI
 
 > AI-powered CLI assistant that helps you find and run commands using natural language.
 
@@ -78,7 +78,7 @@ After building, you can install the CLI globally:
 npm link
 ```
 
-Now you can use `codecraft` from anywhere in your terminal.
+Now you can use `ai-cli` from anywhere in your terminal.
 
 ## Usage
 
@@ -87,8 +87,8 @@ Now you can use `codecraft` from anywhere in your terminal.
 Get help with commands and tools:
 
 ```bash
-codecraft ask "how do I find large files?"
-codecraft ask "what's the difference between grep and awk?"
+ai-cli ask "how do I find large files?"
+ai-cli ask "what's the difference between grep and awk?"
 ```
 
 ### Run Commands
@@ -96,15 +96,15 @@ codecraft ask "what's the difference between grep and awk?"
 Generate and execute commands from natural language:
 
 ```bash
-codecraft run "compress all images in current folder"
-codecraft run "find all JavaScript files modified in the last week"
-codecraft run "create a git branch called feature/new-ui"
+ai-cli run "compress all images in current folder"
+ai-cli run "find all JavaScript files modified in the last week"
+ai-cli run "create a git branch called feature/new-ui"
 ```
 
 Add `-y` flag to skip confirmation (use with caution):
 
 ```bash
-codecraft run "list all running processes" -y
+ai-cli run "list all running processes" -y
 ```
 
 ### Explain Commands
@@ -112,9 +112,9 @@ codecraft run "list all running processes" -y
 Understand what a command does before running it:
 
 ```bash
-codecraft explain "rm -rf node_modules"
-codecraft explain "docker-compose up -d"
-codecraft explain "find . -name '*.log' -delete"
+ai-cli explain "rm -rf node_modules"
+ai-cli explain "docker-compose up -d"
+ai-cli explain "find . -name '*.log' -delete"
 ```
 
 ### Interactive Chat
@@ -122,7 +122,7 @@ codecraft explain "find . -name '*.log' -delete"
 Start a conversation with the AI:
 
 ```bash
-codecraft chat
+ai-cli chat
 ```
 
 Type your questions and get answers in real-time. Type `quit` or `exit` to leave.
@@ -132,28 +132,28 @@ Type your questions and get answers in real-time. Type `quit` or `exit` to leave
 View all available OpenRouter models with pricing and context information:
 
 ```bash
-codecraft models
+ai-cli models
 ```
 
 Filter and search models:
 
 ```bash
 # Search for specific models
-codecraft models --search gpt
+ai-cli models --search gpt
 
 # Show only free models
-codecraft models --free
+ai-cli models --free
 
 # Limit results
-codecraft models --limit 10
+ai-cli models --limit 10
 
 # Sort by price, name, or context length
-codecraft models --sort price
-codecraft models --sort context
-codecraft models --sort name
+ai-cli models --sort price
+ai-cli models --sort context
+ai-cli models --sort name
 
 # Combine filters
-codecraft models --search claude --free --limit 5
+ai-cli models --search claude --free --limit 5
 ```
 
 ### Diagnose API Connection
@@ -161,7 +161,7 @@ codecraft models --search claude --free --limit 5
 Test your API key and connection to OpenRouter:
 
 ```bash
-codecraft diagnose
+ai-cli diagnose
 ```
 
 This command will:
@@ -176,10 +176,10 @@ This command will:
 
 ### Check System Context
 
-See what CodeCraft knows about your system:
+See what AI CLI knows about your system:
 
 ```bash
-codecraft context
+ai-cli context
 ```
 
 ### Use Different Models
@@ -187,8 +187,8 @@ codecraft context
 Specify a different AI model with the `-m` flag:
 
 ```bash
-codecraft ask "how do I use sed?" -m anthropic/claude-3-sonnet
-codecraft run "backup my database" -m openai/gpt-4
+ai-cli ask "how do I use sed?" -m anthropic/claude-3-sonnet
+ai-cli run "backup my database" -m openai/gpt-4
 ```
 
 Available models include:
@@ -231,7 +231,7 @@ See all available models at https://openrouter.ai/models
 
 ## Provider Routing
 
-CodeCraft supports OpenRouter's advanced provider routing features for optimal performance:
+AI CLI supports OpenRouter's advanced provider routing features for optimal performance:
 
 ### Provider Preferences
 
@@ -256,14 +256,14 @@ OPENROUTER_DATA_COLLECTION=allow
 Use the `openrouter/auto` model to automatically route requests to the best model for your prompt:
 
 ```bash
-codecraft ask "complex coding question" -m openrouter/auto
+ai-cli ask "complex coding question" -m openrouter/auto
 ```
 
 The auto-router uses a meta-model to analyze your prompt and select the optimal model from dozens of options, ensuring you get the best possible response while optimizing for cost and performance.
 
 ## Safety Features
 
-CodeCraft includes a three-tier security system to protect your system:
+AI CLI includes a three-tier security system to protect your system:
 
 ### 🚫 Blocked Commands (Cannot Execute)
 Commands that could cause catastrophic system damage are completely blocked:
@@ -296,36 +296,36 @@ Commands that modify system state show a warning:
 
 **Browse available models:**
 ```bash
-codecraft models --search gpt-4
-codecraft models --free --limit 10
+ai-cli models --search gpt-4
+ai-cli models --free --limit 10
 ```
 
 **Find large files:**
 ```bash
-codecraft ask "how do I find files larger than 100MB?"
+ai-cli ask "how do I find files larger than 100MB?"
 ```
 
 **Compress images:**
 ```bash
-codecraft run "compress all PNG images to 80% quality"
+ai-cli run "compress all PNG images to 80% quality"
 ```
 
 **Git operations:**
 ```bash
-codecraft run "create a new branch and switch to it"
-codecraft run "undo my last commit but keep the changes"
+ai-cli run "create a new branch and switch to it"
+ai-cli run "undo my last commit but keep the changes"
 ```
 
 **System administration:**
 ```bash
-codecraft run "show disk usage sorted by size"
-codecraft run "find processes using port 3000"
+ai-cli run "show disk usage sorted by size"
+ai-cli run "find processes using port 3000"
 ```
 
 **Docker:**
 ```bash
-codecraft run "stop all running containers"
-codecraft explain "docker-compose up -d --build"
+ai-cli run "stop all running containers"
+ai-cli explain "docker-compose up -d --build"
 ```
 
 ## Troubleshooting
@@ -339,7 +339,7 @@ codecraft explain "docker-compose up -d --build"
 - Check that your OpenRouter account has credits
 
 **Commands not working on Windows**
-- CodeCraft detects PowerShell vs cmd automatically
+- AI CLI detects PowerShell vs cmd automatically
 - Make sure you're using the correct shell for your environment
 
 ## Versioning
@@ -348,7 +348,7 @@ This project uses [Semantic Versioning](https://semver.org/). Version updates ar
 
 ## Contributing
 
-1. Fork the repository
+1. Fork the repository at https://github.com/PierrunoYT/ai-cli
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes with clear commits
 4. Open a Pull Request
