@@ -6,6 +6,13 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 
 ## [Unreleased]
 
+## [0.1.3] - 2025-12-03
+
+### Added
+- PowerShell security patterns:
+  - Dangerous: `Remove-Item -Recurse`, `Remove-Item *`
+  - Warning: `Remove-Item`, `Stop-Computer`, `Restart-Computer`, `Stop-Service`, `Stop-Process`
+
 ## [0.1.2] - 2025-12-03
 
 ### Added

@@ -276,16 +276,17 @@ Commands that could cause catastrophic system damage are completely blocked:
 ### 🚨 Dangerous Commands (Requires Typing CONFIRM)
 High-risk commands require explicit confirmation by typing "CONFIRM":
 - `rm -rf` with any path
+- `Remove-Item -Recurse` or `Remove-Item *` (PowerShell)
 - `DROP DATABASE`, `DROP TABLE`, `TRUNCATE`
 - `git reset --hard`, `git push --force`
 - These commands **ignore the `-y` flag** for safety
 
 ### ⚠️ Warning Commands (Requires Confirmation)
 Commands that modify system state show a warning:
-- Recursive file operations
-- System shutdown/reboot
-- Service management
-- Process termination
+- Recursive file operations (`rm -r`, `Remove-Item`)
+- System shutdown/reboot (`shutdown`, `Stop-Computer`, `Restart-Computer`)
+- Service management (`Stop-Service`, `systemctl stop`)
+- Process termination (`kill -9`, `Stop-Process`)
 
 ### Additional Protections
 - **Timeout Protection**: Commands timeout after 30 seconds by default

@@ -32,6 +32,9 @@ export class CommandExecutor {
     /rm\s+.*\*/,                      // rm with wildcards
     /del\s+\/[sS]/,                   // Windows recursive delete
     /rd\s+\/[sS]/,                    // Windows recursive rmdir
+    /Remove-Item.*-Recurse/i,         // PowerShell recursive delete
+    /Remove-Item.*\*/i,               // PowerShell delete with wildcards
+    /ri\s+.*-Recurse/i,               // PowerShell alias recursive delete
     /DROP\s+DATABASE/i,               // SQL drop database
     /DROP\s+TABLE/i,                  // SQL drop table
     /TRUNCATE\s+TABLE/i,              // SQL truncate
@@ -45,13 +48,19 @@ export class CommandExecutor {
   // Warning patterns - show caution but normal confirmation
   private warningPatterns = [
     /rm\s+-r/,                        // Recursive remove
+    /Remove-Item/i,                   // PowerShell delete (any)
+    /del\s+/i,                        // Windows delete
     /shutdown/i,                      // System shutdown
     /reboot/i,                        // System reboot
+    /Restart-Computer/i,              // PowerShell restart
+    /Stop-Computer/i,                 // PowerShell shutdown
     /init\s+[06]/,                    // Init runlevel
     /systemctl\s+(stop|disable)/,     // Systemctl stop/disable
     /service\s+\w+\s+stop/,           // Service stop
+    /Stop-Service/i,                  // PowerShell stop service
     /kill\s+-9/,                      // Force kill
     /pkill/,                          // Process kill
+    /Stop-Process/i,                  // PowerShell kill process
     /chmod\s+-R/,                     // Recursive chmod
     /chown\s+-R/,                     // Recursive chown
   ];
