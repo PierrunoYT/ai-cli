@@ -5,30 +5,60 @@ import { CommandResult } from '../types/index.js';
 const execAsync = promisify(exec);
 
 export class CommandExecutor {
-  private dangerousPatterns = [
-    /rm\s+-rf\s+\//,
-    /rm\s+-fr\s+\//,
-    /del\s+\/[sS]\s+[cC]:\\/,
-    /format\s+[cC]:/,
-    /dd\s+if=/,
-    /mkfs\./,
-    />\/dev\/sd[a-z]/,
-    /:\(\)\{\s*:\|:&\s*\};:/,  // Fork bomb
-    /chmod\s+-R\s+777\s+\//,
-    /chown\s+-R.*\s+\//,
+  // Blocked patterns - these commands will NOT be executed
+  private blockedPatterns = [
+    /rm\s+-rf\s+\/($|\s)/,           // rm -rf / (root)
+    /rm\s+-fr\s+\/($|\s)/,           // rm -fr / (root)
+    /rm\s+-rf\s+\/\*($|\s)/,         // rm -rf /*
+    /rm\s+-rf\s+~($|\s)/,            // rm -rf ~ (home)
+    /del\s+\/[sS]\s+[cC]:\\($|\s)/,  // del /s C:\ (Windows root)
+    /rd\s+\/[sS]\s+\/[qQ]\s+[cC]:\\/, // rd /s /q C:\ (Windows)
+    /format\s+[cC]:/,                 // format C:
+    /dd\s+if=.*of=\/dev\/sd[a-z]$/,   // dd to disk device
+    /mkfs\.\w+\s+\/dev\/sd[a-z]/,     // format disk
+    />\/dev\/sd[a-z]/,                // write to disk device
+    /:\(\)\{\s*:\|:&\s*\};:/,         // Fork bomb
+    /chmod\s+-R\s+777\s+\/($|\s)/,    // chmod 777 / (root)
+    /chown\s+-R.*\s+\/($|\s)/,        // chown / (root)
+    />(\/dev\/null|\/dev\/zero)\s*</,  // Dangerous redirects
+    /curl.*\|\s*(ba)?sh/,             // Piping curl to shell
+    /wget.*\|\s*(ba)?sh/,             // Piping wget to shell
   ];
 
-  private warningPatterns = [
-    /rm\s+-r/,
-    /rm\s+.*\*/,
-    /del\s+\/[sS]/,
-    /DROP\s+DATABASE/i,
-    /DROP\s+TABLE/i,
-    /TRUNCATE/i,
-    /shutdown/i,
-    /reboot/i,
-    /init\s+[06]/,
+  // Dangerous patterns - require explicit confirmation with typing
+  private dangerousPatterns = [
+    /rm\s+-rf/,                       // Any rm -rf
+    /rm\s+-fr/,                       // Any rm -fr  
+    /rm\s+.*\*/,                      // rm with wildcards
+    /del\s+\/[sS]/,                   // Windows recursive delete
+    /rd\s+\/[sS]/,                    // Windows recursive rmdir
+    /DROP\s+DATABASE/i,               // SQL drop database
+    /DROP\s+TABLE/i,                  // SQL drop table
+    /TRUNCATE\s+TABLE/i,              // SQL truncate
+    /DELETE\s+FROM\s+\w+\s*;?$/i,     // SQL delete without WHERE
+    /git\s+reset\s+--hard/,           // Git hard reset
+    /git\s+clean\s+-fd/,              // Git clean force
+    /git\s+push.*--force/,            // Git force push
+    /npm\s+cache\s+clean\s+--force/,  // npm cache clean
   ];
+
+  // Warning patterns - show caution but normal confirmation
+  private warningPatterns = [
+    /rm\s+-r/,                        // Recursive remove
+    /shutdown/i,                      // System shutdown
+    /reboot/i,                        // System reboot
+    /init\s+[06]/,                    // Init runlevel
+    /systemctl\s+(stop|disable)/,     // Systemctl stop/disable
+    /service\s+\w+\s+stop/,           // Service stop
+    /kill\s+-9/,                      // Force kill
+    /pkill/,                          // Process kill
+    /chmod\s+-R/,                     // Recursive chmod
+    /chown\s+-R/,                     // Recursive chown
+  ];
+
+  isBlocked(command: string): boolean {
+    return this.blockedPatterns.some(pattern => pattern.test(command));
+  }
 
   isDangerous(command: string): boolean {
     return this.dangerousPatterns.some(pattern => pattern.test(command));
@@ -36,6 +66,13 @@ export class CommandExecutor {
 
   requiresWarning(command: string): boolean {
     return this.warningPatterns.some(pattern => pattern.test(command));
+  }
+
+  getSecurityLevel(command: string): 'blocked' | 'dangerous' | 'warning' | 'safe' {
+    if (this.isBlocked(command)) return 'blocked';
+    if (this.isDangerous(command)) return 'dangerous';
+    if (this.requiresWarning(command)) return 'warning';
+    return 'safe';
   }
 
   async execute(command: string, timeout: number = 30000): Promise<CommandResult> {
@@ -124,15 +161,19 @@ export class CommandExecutor {
     });
   }
 
-  validateCommand(command: string): { valid: boolean; reason?: string } {
+  validateCommand(command: string): { valid: boolean; reason?: string; securityLevel?: string } {
     if (!command || command.trim().length === 0) {
       return { valid: false, reason: 'Command is empty' };
     }
 
-    if (this.isDangerous(command)) {
-      return { valid: false, reason: 'Command is potentially dangerous and should not be executed' };
+    if (this.isBlocked(command)) {
+      return { 
+        valid: false, 
+        reason: 'Command is blocked for security reasons. This command could cause irreversible damage to your system.',
+        securityLevel: 'blocked'
+      };
     }
 
-    return { valid: true };
+    return { valid: true, securityLevel: this.getSecurityLevel(command) };
   }
 }

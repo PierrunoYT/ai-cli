@@ -1,14 +1,35 @@
 import inquirer from 'inquirer';
+import chalk from 'chalk';
 
-export async function confirmExecution(command: string, explanation: string, dangerous: boolean): Promise<boolean> {
-  const warningPrefix = dangerous ? '⚠️  DANGEROUS: ' : '';
+export async function confirmExecution(
+  command: string, 
+  explanation: string, 
+  securityLevel: 'dangerous' | 'warning' | 'safe'
+): Promise<boolean> {
+  if (securityLevel === 'dangerous') {
+    console.log(chalk.red.bold('\n🚨 DANGEROUS COMMAND DETECTED'));
+    console.log(chalk.red('This command could cause significant damage or data loss.'));
+    console.log(chalk.yellow(`\nTo proceed, type: ${chalk.bold('CONFIRM')}\n`));
+    
+    const { confirmation } = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'confirmation',
+        message: 'Type CONFIRM to execute:',
+      },
+    ]);
+
+    return confirmation === 'CONFIRM';
+  }
+
+  const warningPrefix = securityLevel === 'warning' ? '⚠️  ' : '';
   
   const { confirmed } = await inquirer.prompt([
     {
       type: 'confirm',
       name: 'confirmed',
       message: `${warningPrefix}Execute this command?\n  Command: ${command}\n  Explanation: ${explanation}\n  Proceed?`,
-      default: !dangerous,
+      default: securityLevel === 'safe',
     },
   ]);
 

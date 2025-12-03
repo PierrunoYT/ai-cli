@@ -6,6 +6,21 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 
 ## [Unreleased]
 
+## [0.1.2] - 2025-12-03
+
+### Added
+- **Three-tier security system** for command execution:
+  - 🚫 Blocked: Catastrophic commands (rm -rf /, format C:, fork bombs) are completely blocked
+  - 🚨 Dangerous: High-risk commands (rm -rf, DROP DATABASE, git reset --hard) require typing "CONFIRM"
+  - ⚠️ Warning: System-modifying commands show caution prompt
+- Dangerous commands now ignore `-y` flag and always require explicit confirmation
+- `isBlocked()` and `getSecurityLevel()` methods in CommandExecutor
+- Protection against piping untrusted content to shell (`curl | sh`, `wget | bash`)
+
+### Changed
+- Enhanced command validation with security level feedback
+- Improved confirmation prompts with security-level-specific messaging
+
 ## [0.1.1] - 2025-12-03
 
 ### Fixed

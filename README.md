@@ -263,11 +263,31 @@ The auto-router uses a meta-model to analyze your prompt and select the optimal 
 
 ## Safety Features
 
-CodeCraft includes multiple safety features to protect your system:
+CodeCraft includes a three-tier security system to protect your system:
 
-- **Confirmation Required**: Always asks before executing commands (unless `-y` flag is used)
-- **Dangerous Command Detection**: Warns about potentially destructive operations like `rm -rf /`, `format`, `dd`, etc.
-- **Command Validation**: Checks commands before execution
+### 🚫 Blocked Commands (Cannot Execute)
+Commands that could cause catastrophic system damage are completely blocked:
+- `rm -rf /` or `rm -rf ~` (delete root or home directory)
+- `format C:` or `del /s C:\` (Windows system destruction)
+- `dd` writes to disk devices
+- Fork bombs and malicious scripts
+- Piping untrusted content to shell (`curl | sh`)
+
+### 🚨 Dangerous Commands (Requires Typing CONFIRM)
+High-risk commands require explicit confirmation by typing "CONFIRM":
+- `rm -rf` with any path
+- `DROP DATABASE`, `DROP TABLE`, `TRUNCATE`
+- `git reset --hard`, `git push --force`
+- These commands **ignore the `-y` flag** for safety
+
+### ⚠️ Warning Commands (Requires Confirmation)
+Commands that modify system state show a warning:
+- Recursive file operations
+- System shutdown/reboot
+- Service management
+- Process termination
+
+### Additional Protections
 - **Timeout Protection**: Commands timeout after 30 seconds by default
 - **Context Awareness**: Generates commands appropriate for your OS and shell
 

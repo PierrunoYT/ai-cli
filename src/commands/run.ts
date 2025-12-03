@@ -52,11 +52,12 @@ Important:
     let suggestion: CommandSuggestion;
     try {
       const parsed = JSON.parse(response.trim());
+      const securityLevel = executor.getSecurityLevel(parsed.command);
       suggestion = {
         command: parsed.command,
         explanation: parsed.explanation,
-        dangerous: executor.isDangerous(parsed.command),
-        requiresConfirmation: executor.requiresWarning(parsed.command) || executor.isDangerous(parsed.command),
+        dangerous: securityLevel === 'dangerous',
+        requiresConfirmation: securityLevel !== 'safe',
       };
     } catch (parseError) {
       // Fallback: try to extract command from response
@@ -65,12 +66,15 @@ Important:
       return;
     }
 
-    // Validate command
+    // Validate command (checks for blocked commands)
     const validation = executor.validateCommand(suggestion.command);
     if (!validation.valid) {
-      console.error(chalk.red('\n❌ Command validation failed:'), validation.reason);
+      console.error(chalk.red('\n🚫 BLOCKED:'), validation.reason);
+      console.log(chalk.gray('\nThis command has been blocked for your safety.'));
       return;
     }
+
+    const securityLevel = validation.securityLevel as 'dangerous' | 'warning' | 'safe';
 
     // Display the command
     console.log(chalk.cyan('\n📝 Generated Command:\n'));
@@ -78,20 +82,20 @@ Important:
     console.log(chalk.gray('\n💬 Explanation:'));
     console.log(chalk.gray('  ' + suggestion.explanation));
     
-    if (suggestion.dangerous) {
-      console.log(chalk.red('\n⚠️  WARNING: This command is potentially DANGEROUS!'));
-    } else if (suggestion.requiresConfirmation) {
-      console.log(chalk.yellow('\n⚠️  Caution: This command may modify or delete files.'));
+    if (securityLevel === 'dangerous') {
+      console.log(chalk.red.bold('\n🚨 DANGEROUS: This command could cause significant damage!'));
+    } else if (securityLevel === 'warning') {
+      console.log(chalk.yellow('\n⚠️  Caution: This command may modify system state or files.'));
     }
 
     // Ask for confirmation unless auto-yes is enabled
-    let shouldExecute = autoYes;
-    if (!autoYes) {
-      console.log();
+    // Dangerous commands ALWAYS require explicit confirmation (ignore -y flag)
+    let shouldExecute = autoYes && securityLevel === 'safe';
+    if (!shouldExecute) {
       shouldExecute = await confirmExecution(
         suggestion.command,
         suggestion.explanation,
-        suggestion.dangerous
+        securityLevel
       );
     }
 
