@@ -1,0 +1,43 @@
+{
+  "name": "codecraft",
+  "version": "0.1.0",
+  "description": "AI-powered CLI assistant that helps you find and run commands using natural language",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "codecraft": "./dist/index.js"
+  },
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cli",
+    "assistant",
+    "ai",
+    "openrouter",
+    "command-line",
+    "automation",
+    "helper"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^11.1.0",
+    "inquirer": "^9.2.12",
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@types/inquirer": "^9.0.7",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
