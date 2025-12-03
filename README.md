@@ -321,6 +321,10 @@ codecraft explain "docker-compose up -d --build"
 - CodeCraft detects PowerShell vs cmd automatically
 - Make sure you're using the correct shell for your environment
 
+## Versioning
+
+This project uses [Semantic Versioning](https://semver.org/). Version updates are tracked in `package.json` and `CHANGELOG.md`. We do not create formal GitHub releases - install directly from the repository.
+
 ## Contributing
 
 1. Fork the repository
