@@ -6,14 +6,10 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 
 ## [Unreleased]
 
-### Added
-- 
-
-### Changed
-- 
+## [0.1.1] - 2025-12-03
 
 ### Fixed
-- 
+- Fixed duplicate output display in `run` command
 
 ## [0.1.0] - 2025-12-03
 

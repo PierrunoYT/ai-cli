@@ -112,10 +112,6 @@ Important:
     
     if (result.success) {
       console.log(chalk.green('✅ Command completed successfully!'));
-      if (result.output && !result.output.includes('Command executed successfully')) {
-        console.log(chalk.gray('\nOutput:'));
-        console.log(result.output);
-      }
     } else {
       console.log(chalk.red('❌ Command failed with exit code ' + result.exitCode));
       if (result.error) {
